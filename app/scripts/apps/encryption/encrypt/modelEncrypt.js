@@ -14,82 +14,17 @@ define([
     _.extend(ModelEncrypt.prototype, {
 
         initialize: function (args) {
-            this.configs = args.configs;
+            this.oldConf = App.settings.cryptoconf
+            this.oldSecureKey = App.settings.secureKey
+
+            this.newConf = App.settings.newCryptoconf
+            this.newSecureKey = App.settings.newSecureKey
+            // console.log("OLD conf: "+this.oldConf+" "+this.oldSecureKey)
+            // console.log("NEW conf: "+this.newConf+" "+this.newSecureKey)
+
             this.notes = args.notes;
             this.notebooks = args.notebooks;
 
-            this.encrypt();
-        },
-
-        encrypt: function () {
-            if (this.oldConfigs.encrypt === 0 && this.oldConfigs.secureKey === '') {
-                // This is probably the first encryption
-                this.firstEncryption();
-            } else if (this.isSettingsChanged() === true) {
-                // Some (or all) of encryption's settings has been changed
-                this.reEncryption();
-            } else if (this.oldConfigs.encrypt === 1 && this.configs.encrypt === 0) {
-                // User disabled encryption - unencrypt all data
-                this.decryption();
-            } else if (this.oldConfigs.encrypt === 0) {
-                // User just re enabled encryption
-                this.encryptOnlyNew();
-            }
-        },
-
-        // Returns true if any of encryption's settings has been changed
-        // ----------------------------
-        isSettingsChanged: function () {
-            var encrSet = ['encryptPass', 'encryptSalt', 'encryptIter', 'encryptTag', 'encryptKeySize'],
-                changed = false;
-
-            _.each(encrSet, function (set) {
-                if (typeof(this.configs[set]) !== 'object' &&
-                    this.configs[set] !== this.oldConfigs[set]) {
-                    changed = true;
-                } else if (this.configs[set].toString() !== this.oldConfigs[set].toString()) {
-                    changed = true;
-                }
-            }, this);
-
-            return changed;
-        },
-
-        // First kiss :)
-        // ------------
-        firstEncryption: function () {
-            App.log('First encryption');
-            this.encryptNotes();
-            this.encryptNotebooks();
-        },
-
-        // User re enabled encryption but does not change any of settings
-        // -------------------------
-        encryptOnlyNew: function () {
-            App.log('You\'re enabled encryption again');
-
-            // Filter data
-            this.notes.reset(this.notes.getUnEncrypted());
-            this.notebooks.reset(this.notebooks.getUnEncrypted());
-
-            // Encrypt
-            this.encryptNotes();
-            this.encryptNotebooks();
-        },
-
-        // Encryption settings is changed decrypt and encrypt all data
-        // ------------------------
-        reEncryption: function () {
-            App.log('You changed some of encryption settings');
-            App.settings.encrypt = 1;
-            this.encryptNotes();
-            this.encryptNotebooks();
-        },
-
-        // No need of encryption - decrypt all the data
-        // ----------------------
-        decryption: function () {
-            App.log('Decryption');
             this.encryptNotes();
             this.encryptNotebooks();
         },
@@ -101,15 +36,16 @@ define([
             this.notes.each(function (note) {
                 data = {};
 
+                // console.log("Encrypt note")
+                // console.log("SRC: "+note.get('title'))
                 // Try to decrypt data
-                App.settings = self.oldConfigs;
-                data.title = App.Encryption.API.decrypt(note.get('title'));
-                data.content = App.Encryption.API.decrypt(note.get('content'));
-
+                data.title = App.Encryption.API.decrypt(note.get('title'), self.oldConf, self.oldSecureKey);
+                data.content = App.Encryption.API.decrypt(note.get('content'), self.oldConf, self.oldSecureKey);
+                // console.log("DECR: "+data.title)
                 // Encrypt
-                App.settings = self.configs;
-                data.title = App.Encryption.API.encrypt(data.title);
-                data.content = App.Encryption.API.encrypt(data.content);
+                data.title = App.Encryption.API.encrypt(data.title, self.newConf, self.newSecureKey);
+                data.content = App.Encryption.API.encrypt(data.content, self.newConf, self.newSecureKey);
+                // console.log("OUT: "+data.title)
 
                 // Save
                 note.trigger('update:any');
@@ -130,11 +66,11 @@ define([
 
                 // Try to decrypt data
                 App.settings = self.oldConfigs;
-                data.name = App.Encryption.API.decrypt(note.get('name'));
+                data.name = App.Encryption.API.decrypt(note.get('name'), self.oldConf, self.oldSecureKey);
 
                 // Encrypt
                 App.settings = self.configs;
-                data.name = App.Encryption.API.encrypt(data.name);
+                data.name = App.Encryption.API.encrypt(data.name, self.newConf, self.newSecureKey);
 
                 // Save
                 note.save(data, {

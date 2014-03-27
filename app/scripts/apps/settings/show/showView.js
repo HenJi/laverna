@@ -20,13 +20,14 @@ define([
             'submit .form-horizontal' : 'save',
             'click .ok'               : 'save',
             'click .close'            : 'close',
-            'click .showField'        : 'clickCheckbox',
+            'click .showField'        : 'changeEnc',
             'click #randomize'        : 'randomize',
             'change input, select, textarea' : 'triggerChange'
         },
 
         ui: {
-            saltInput     : 'input[name=encryptSalt]'
+            saltInput     : 'input[name=encryptSalt]',
+            cryptOpts     : '.cryptOpt'
         },
 
         initialize: function () {
@@ -55,40 +56,59 @@ define([
         /**
          * Shows fieldsets with aditional parameters
          */
-        clickCheckbox: function ( e ) {
+        changeEnc: function ( e ) {
             var input = $(e.currentTarget),
                 field = $(input.attr('data-field'));
 
-            if ( input.is(':checked') ) {
-                field.css('display', 'block');
-            } else {
-                field.css('display', 'none');
-            }
+            this.ui.cryptOpts.hide()
+            field.show();
         },
 
         /**
          * Save the configs changes
          */
         save: function () {
-            var value, el;
-
+            var value, el, newPass;
+            var newCryptoconf = App.settings.newCryptoconf
             _.each(this.changedSettings, function (settingName) {
-                el = this.$('[name=' + settingName + ']');
-
-                if (el.attr('type') !== 'checkbox') {
-                    value = el.val();
-                } else {
-                    value = (el.is(':checked')) ? 1 : 0;
+                this.$('[name=' + settingName + ']').each(
+                    function(i, e){
+                        var el = $(e)
+                        if (el.attr('type') === 'checkbox') {
+                            value = (el.is(':checked')) ? 1 : 0;
+                        } else if (el.attr('type') === 'radio') {
+                            if (el.is(':checked')) {
+                                value = parseInt(el.val())
+                            }
+                        } else {
+                            value = el.val();
+                        }
+                    })
+                // console.log("Changed parameters:")
+                if (typeof value !== "undefined") {
+                    this.collection.trigger('changeSetting', {
+                        name : settingName,
+                        value: value
+                    });
+                    if (settingName.substring(0,7) == "encrypt") {
+                        if (settingName == "encrypt") newCryptoconf.mode = value
+                        else {
+                            var key = settingName.substring(7).toLowerCase()
+                            if (key != "pass") newCryptoconf[key] = value
+                            else newCryptoconf[key] = sjcl.hash.sha256.hash(value)
+                        }
+                    }
+                    if (settingName == "encryptPass") newPass = value
                 }
-
-                this.collection.trigger('changeSetting', {
-                    name : settingName,
-                    value: value
-                });
-
             }, this);
+            App.settings.newCryptoconf = newCryptoconf
+            if (typeof newPass !== "undefined") {
+                var newKey = App.Encryption.API.encryptKey(newPass, newCryptoconf);
+                // App.log("New secure key is : "+newKey)
+                App.settings.newSecureKey = newKey
+            }
 
-            this.somethingChanged = true;
+            this.somethingChanged = this.changedSettings.length > 0;
             this.close();
             return false;
         },

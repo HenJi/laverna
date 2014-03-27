@@ -35,23 +35,26 @@ define([
         },
 
         showProgress: function () {
-            this.oldPassNull = true;
-            if ( !App.settings.secureKey && App.settings.encryptPass !== '') {
-                this.oldPassNull = false;
+            console.log(App.settings.cryptoconf)
+            console.log(App.settings.newCryptoconf)
+            if (App.settings.cryptoconf === App.settings.newCryptoconf
+                && App.settings.newSecureKey === false) {
+                // No change in encryption settings
+                App.navigate('/notes', false);
+            } else {
+
+                // View which shows progress of encryption
+                var view = new EncryptView({
+                    notes     : this.notes,
+                    notebooks : this.notebooks
+                });
+
+                view.on('redirect', this.redirect, this);
+
+                // Show progress
+                App.brand.show(view);
+                this.runMigration()
             }
-
-            // View which shows progress of encryption
-            var view = new EncryptView({
-                notes     : this.notes,
-                notebooks : this.notebooks,
-                oldPass   : this.oldPassNull
-            });
-
-            view.on('checkPasswords', this.checkPasswords, this);
-            view.on('redirect', this.redirect, this);
-
-            // Show progress
-            App.brand.show(view);
         },
 
         redirect: function () {
@@ -59,44 +62,11 @@ define([
             window.location.reload();
         },
 
-        encrypt: function () {
+        runMigration: function () {
             new ModelEncrypt().initialize({
-                configs   : this.configs,
                 notes     : this.notes,
                 notebooks : this.notebooks
-            });
-        },
-
-        checkPasswords: function (args) {
-            var oldConfigs = App.settings,
-                oldKey,
-                newKey;
-
-            App.settings = this.configs;
-            newKey = App.Encryption.API.encryptKey(args.newPass);
-
-            if (newKey !== false) {
-                this.configs.secureKey = newKey;
-            }
-
-            App.settings = oldConfigs;
-            // Old secure key isn't in cache
-            if (this.oldPassNull === false) {
-                oldKey = App.Encryption.API.encryptKey(args.oldPass);
-                if (oldKey !== false) {
-                    App.settings.secureKey = oldKey;
-                }
-            }
-
-            // If no encryption settings changed
-            if (_.difference(oldConfigs, this.configs).length === 0 && oldConfigs.encryptPass !== '') {
-                this.redirect();
-                return false;
-            }
-
-            if (newKey !== false && App.settings.secureKey !== false) {
-                this.encrypt();
-            }
+            })
         }
 
     });

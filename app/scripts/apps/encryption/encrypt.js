@@ -65,51 +65,62 @@ define([
 
         // Cache encryption key within application
         // -----------------------------------
-        encryptKey: function (password) {
-            var pwd = App.settings.encryptPass,
+        encryptKey: function (password, conf) {
+            if (typeof conf === "undefined") {
+                conf = App.settings.cryptoconf
+            }
+            if (conf.mode == 1) {
+                var pwd = conf.pass,
                 p = {};
 
-            if (pwd.toString() === sjcl.hash.sha256.hash(password).toString()) {
-                p.iter = parseInt(App.settings.encryptIter);
-                p.salt = App.settings.encryptSalt;
+                if (pwd.toString() === sjcl.hash.sha256.hash(password).toString()) {
+                    p.iter = parseInt(conf.iter);
+                    p.salt = conf.salt;
 
-                p = sjcl.misc.cachedPbkdf2(password, p);
-                password = p.key.slice(0, parseInt(App.settings.encryptKeySize)/32);
+                    p = sjcl.misc.cachedPbkdf2(password, p);
+                    password = p.key.slice(0, parseInt(conf.keySize)/32);
 
-                return password;
-            } else {
-                return false;
-            }
+                    return password;
+                } else return false
+            } else return false
         },
 
-        encrypt: function (content) {
+        encrypt: function (content, conf, secureKey) {
+            if (typeof conf === "undefined") {
+                conf = App.settings.cryptoconf
+                secureKey = App.settings.secureKey
+            }
             if (!content || content === '') {
                 return content;
             }
 
-            if (App.settings.encrypt === 1 && App.settings.secureKey) {
-                var conf = App.settings,
-                    p = {
-                        iter : conf.encryptIter,
-                        ts   : parseInt(conf.encryptTag),
-                        ks   : parseInt(conf.encryptKeySize),
-                        // Random initialization vector every time
-                        iv   : sjcl.random.randomWords(4, 0)
-                    };
+            if (conf.mode === 1 && secureKey) {
+                var p = {
+                    iter : conf.iter,
+                    ts   : parseInt(conf.tag),
+                    ks   : parseInt(conf.keySize),
+                    // Random initialization vector every time
+                    iv   : sjcl.random.randomWords(4, 0)
+                };
 
-                content = sjcl.encrypt(App.settings.secureKey.toString(), content, p);
+                content = sjcl.encrypt(secureKey.toString(), content, p);
             }
             return content;
         },
 
-        decrypt: function (content) {
+        decrypt: function (content, conf, secureKey) {
+            if (typeof conf === "undefined") {
+                conf = App.settings.cryptoconf
+                secureKey = App.settings.secureKey
+            }
+
             if ( !content || content.length === 0) {
                 return content;
             }
 
-            if (App.settings.encrypt === 1 && App.settings.secureKey) {
+            if (conf.mode === 1 && secureKey) {
                 try {
-                    content = sjcl.decrypt(App.settings.secureKey.toString(), content);
+                    content = sjcl.decrypt(secureKey.toString(), content);
                 } catch(e) {
                     App.log('Can\'t decrypt ' + e);
                 }

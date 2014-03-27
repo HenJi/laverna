@@ -53,7 +53,7 @@ define([
                     window.location.reload();
                 }
             } else {
-                App.log('One of encryption\'s settings is changed');
+                App.log('At least one encryption setting has changed');
                 App.navigate('/encrypt/all', true);
             }
         },

@@ -56,11 +56,25 @@ define([
         },
 
         getConfigs: function () {
-            var data = {};
+            var data = {
+                secureKey: false,
+                newSecureKey: false
+            };
 
             _.forEach(this.models, function ( model ) {
                 data[model.get('name')] = model.get('value');
             });
+
+            var cryptoconf = {
+                mode: data.encrypt,
+                pass: data.encryptPass,
+                salt: data.encryptSalt,
+                iter: data.encryptIter,
+                tag: data.encryptTag,
+                keySize: data.encryptKeySize
+            }
+            data["cryptoconf"] = cryptoconf
+            data["newCryptoconf"] = jQuery.extend({}, cryptoconf);
 
             return data;
         }

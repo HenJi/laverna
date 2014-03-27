@@ -1,4 +1,4 @@
-<div class="container hide" id="encryption-progress">
+<div class="container" id="encryption-progress">
     <div class="page-progress">
         <h1><i class="icon-lock"></i></h1>
         <h1 id="state">{{ i18n('Encryption') }}</h1>
@@ -7,20 +7,4 @@
         </div>
         <h4 class="text-center">{{ i18n('Please wait until encryption has been completed') }}</h4>
     </div>
-</div>
-
-<div class="container" id="encryption-password">
-    <form action="#" class="form-wrapper" role="form" method="post">
-        <h1><i class="icon-lock"></i></h1>
-        <h1>Laverna</h1>
-        <div class="form-password<% if (oldPass == true) { %> hide<% } %>">
-            <i class="icon icon-lock"></i>
-            <input class="form-control input-lg" type="password" name="oldpass" placeholder="{{ i18n('Your old encryption password') }}" autofocus />
-        </div>
-        <div class="form-password">
-            <i class="icon icon-lock"></i>
-            <input class="form-control input-lg" type="password" name="password" placeholder="{{ i18n('Your new encryption password') }}" required="" autofocus />
-        </div>
-        <input class="btn btn-lg btn-block btn-success" type="submit" value="{{ i18n('Submit') }}"/>
-    </form>
 </div>

@@ -12,7 +12,6 @@ define([
         template: _.template(Tmpl),
 
         events: {
-            'submit form': 'checkPasswords'
         },
 
         ui: {
@@ -33,15 +32,6 @@ define([
             // Change encryption progress
             this.options.notes.on('progressEncryption', this.progress, this);
             this.options.notebooks.on('progressEncryption', this.progress, this);
-        },
-
-        checkPasswords: function (e) {
-            e.preventDefault();
-
-            this.trigger('checkPasswords', {
-                newPass: this.ui.password.val().trim(),
-                oldPass: this.ui.oldPass.val().trim(),
-            });
         },
 
         countMax: function () {
@@ -69,7 +59,7 @@ define([
         serializeData: function () {
             return {
                 max: this.max,
-                oldPass: this.options.oldPass,
+                hasPass: this.options.hasPass
             };
         },
 
