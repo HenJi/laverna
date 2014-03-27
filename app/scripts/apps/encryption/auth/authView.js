@@ -16,11 +16,24 @@ define([
         },
 
         ui: {
-            password : 'input[name=password]'
+            password : 'input[name=password]',
+            wrap     : '.form-password'
         },
 
         initialize: function () {
-            this.on('shown', this.focusPassword, this);
+            this.on('shown', function(){
+                this.focusPassword()
+                this.ui.password.change(this.removeRed)
+            }, this);
+            this.on('wrongpass', this.onWrongPass, this);
+        },
+
+        removeRed: function() {
+            $(this).parent().removeClass("has-error");
+        },
+
+        onWrongPass: function() {
+            this.ui.wrap.addClass("has-error");
         },
 
         focusPassword: function () {
