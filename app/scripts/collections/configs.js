@@ -65,7 +65,8 @@ define([
         getConfigs: function () {
             var data = {
                 secureKey: false,
-                newSecureKey: false
+                newSecureKey: false,
+                daplugKey: false
             };
 
             var cryptoconf = {}

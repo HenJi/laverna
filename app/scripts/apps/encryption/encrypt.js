@@ -27,6 +27,7 @@ define([
     Encryption.Router = Marionette.AppRouter.extend({
         appRoutes: {
             'auth': 'showAuth',
+            'dpauth': 'showDpAuth',
             'encrypt/all': 'showEncryptAll',
         }
     });
@@ -45,6 +46,12 @@ define([
             });
         },
 
+        showDpAuth: function() {
+            require(['apps/encryption/dpauth/controller'], function (Controller) {
+                executeAction(new Controller().showForm);
+            });
+        },
+
         showEncryptAll: function () {
             require(['apps/encryption/encrypt/controller'], function (Controller) {
                 executeAction(new Controller().showEncrypt);
@@ -54,28 +61,15 @@ define([
 
     // API
     Encryption.API = {
-        checkAuth: function () {
+        checkAuth: function (cb) {
             if (App.settings.encrypt === 1 && !App.settings.secureKey) {
                 App.notesArg = null;
                 App.navigate('/auth', true);
-                return false;
-            } else if (App.settings.encrypt === 2 && typeof currentSC === "undefined") {
-                var ko = function(){ return false }
-                var scOK = function(){ return true }
-                var snOK = function(sn){
-                    if (sn == App.settings.cryptoconf.serial)
-                        return DP.openCardSC(scOK, ko)
-                    else return ko()
-                }
-                var initOK = function(){return DP.getSerial(snOK, ko)}
-                var scanOK = function(readers){
-                    if (readers.length == 0) return ko()
-                    else if (readers.length == 1)
-                        return DP.initCard(readers[0], initOK, ko)
-                    else return ko()
-                }
-                return DP.scan(scanOK, ko)
-            } else return true;
+                cb(false);
+            } else if (App.settings.encrypt === 2 && !App.settings.daplugKey) {
+                App.navigate('/dpauth', true);
+                cb(false)
+            } else cb(true)
         },
 
         // Cache encryption key within application
@@ -108,6 +102,7 @@ define([
             if (!content || content === '') {
                 return content;
             }
+            console.log("ENC_SRC: "+content)
 
             if (conf.mode === 1 && secureKey) {
                 var p = {
@@ -119,15 +114,8 @@ define([
                 };
 
                 content = sjcl.encrypt(secureKey.toString(), content, p);
-            } else if (conf.mode == 2 && typeof currentSC !== "undefined") {
-                DP.encrypt(
-                    content,
-                    function(res){
-                        console.log("ENC2: "+res)
-                        if (cb) cb(res)
-                    },
-                    function(e){"ERR: "+e}
-                )
+            } else if (conf.mode == 2 && App.settings.daplugKey) {
+                content = sjcl.encrypt(App.settings.daplugKey, content);
             }
             if (cb && conf.mode != 2) cb(content)
             console.log("ENC: "+content)
@@ -139,7 +127,7 @@ define([
                 conf = App.settings.cryptoconf
                 secureKey = App.settings.secureKey
             }
-            console.log(conf)
+            console.log("DEC_SRC: "+content)
 
             if ( !content || content.length === 0) {
                 return content;
@@ -152,15 +140,12 @@ define([
                 } catch(e) {
                     App.log('Can\'t decrypt ' + e);
                 }
-            } else if (conf.mode == 2 && typeof currentSC !== "undefined") {
-                DP.decrypt(
-                    content,
-                    function(res){
-                        console.log("DEC2: "+res)
-                        if (cb) cb(res)
-                    },
-                    function(e){"ERR: "+e}
-                )
+            } else if (conf.mode == 2 && App.settings.daplugKey) {
+                try {
+                    content = sjcl.decrypt(App.settings.daplugKey, content);
+                } catch(e) {
+                    App.log('Can\'t decrypt daplug ' + e);
+                }
             }
             if (cb && conf.mode != 2) cb(content)
             console.log("DEC: "+content)

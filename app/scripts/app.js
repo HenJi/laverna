@@ -69,21 +69,24 @@ define([
 
     // For submodules
     App.startSubApp = function(appName, args){
-        if (appName !== 'Encryption' && !App.Encryption.API.checkAuth()) {
-            return;
-        }
+        App.Encryption.API.checkAuth(
+            function(authOk){
+                if (appName !== 'Encryption' && !authOk) {
+                    return;
+                }
+                var currentApp = appName ? App.module(appName) : null;
+                if (App.currentApp === currentApp){ return; }
 
-        var currentApp = appName ? App.module(appName) : null;
-        if (App.currentApp === currentApp){ return; }
+                if (App.currentApp){
+                    App.currentApp.stop();
+                }
 
-        if (App.currentApp){
-            App.currentApp.stop();
-        }
-
-        App.currentApp = currentApp;
-        if(currentApp){
-            currentApp.start(args);
-        }
+                App.currentApp = currentApp;
+                if(currentApp){
+                    currentApp.start(args);
+                }
+            }
+        )
     };
 
     // Initialize settings

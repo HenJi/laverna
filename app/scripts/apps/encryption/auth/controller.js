@@ -23,16 +23,6 @@ define([
             form.on('login', function(p){this.login(form, p)}, this);
         },
 
-        login: function (form, password) {
-            // var pwd = App.settings.encryptPass;
-            var pwd = App.Encryption.API.encryptKey(password);
-            if (pwd !== false) {
-                App.settings.secureKey = pwd;
-                App.navigateBack('/notes', true);
-            } else {
-                form.trigger('wrongpass')
-            }
-        }
 
     });
 

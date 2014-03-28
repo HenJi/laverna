@@ -56,7 +56,7 @@ define([
             return false;
         },
 
-        openCardSC: function() {
+        openCardSC: function(sn) {
             App.log("Opening card Secure channel")
             var self = this
             DP.openCardSC(
@@ -64,7 +64,13 @@ define([
                     console.log("Secure channel opened (2)")
                     if (App.settings.cryptoconf.mode != 2) {
                         DP.resetCryptoKey(
-                            function(){ console.log("crypto key resetted") },
+                            function(){
+                                console.log("crypto key resetted")
+                                DP.encrypt(sn, function(k){
+                                    App.settings.daplugKey = k
+                                    return true
+                                })
+                            },
                             function(e){ console.log("PUT_KEY failed: "+e) })
                     }
                     self.ui.daplugState.hide()
@@ -84,7 +90,7 @@ define([
                             App.log("s/n: "+sn)
                             self.ui.daplugSerial.val(sn)
                             self.changedSettings.push("encryptSerial")
-                            self.openCardSC()
+                            self.openCardSC(sn)
                         }, function(e){ console.log("Error exchanging APDU: "+e) }
                     )
                 }, function(e){ console.log("Error connecting to card: "+e) }
