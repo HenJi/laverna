@@ -27,7 +27,10 @@ define([
 
         ui: {
             saltInput     : 'input[name=encryptSalt]',
-            cryptOpts     : '.cryptOpt'
+            cryptOpts     : '.cryptOpt',
+            daplugState   : '#daplugStateHolder',
+            daplugHolder  : '#daplugHolder',
+            daplugSerial  :'input[name=encryptSerial]'
         },
 
         initialize: function () {
@@ -53,15 +56,66 @@ define([
             return false;
         },
 
+        openCardSC: function() {
+            App.log("Opening card Secure channel")
+            var self = this
+            DP.openCardSC(
+                function(){
+                    console.log("Secure channel opened (2)")
+                    if (App.settings.cryptoconf.mode != 2) {
+                        DP.resetCryptoKey(
+                            function(){ console.log("crypto key resetted") },
+                            function(e){ console.log("PUT_KEY failed: "+e) })
+                    }
+                    self.ui.daplugState.hide()
+                    self.ui.daplugHolder.show()
+                }, function(e){ console.log("SC failed: "+e) }
+            )
+        },
+
+        initCard: function(reader) {
+            var self = this
+            DP.initCard(
+                reader,
+                function(){
+                    App.log("Card initialized")
+                    DP.getSerial(
+                        function(sn) {
+                            App.log("s/n: "+sn)
+                            self.ui.daplugSerial.val(sn)
+                            self.changedSettings.push("encryptSerial")
+                            self.openCardSC()
+                        }, function(e){ console.log("Error exchanging APDU: "+e) }
+                    )
+                }, function(e){ console.log("Error connecting to card: "+e) }
+            )
+        },
+
+        scanDevices: function () {
+            var self = this
+            var st = self.ui.daplugState
+            DP.scan(
+                function(readers){
+                    if (readers.length == 0) st.html($.t("No Daplug dongle"))
+                    else if (readers.length == 1) self.initCard(readers[0])
+                    else st.html($.t("Please use a single Daplug dongle"))
+                },
+                function(){
+                    st.html($.t("Cannot start Chrome extension"))
+                }
+            )
+        },
+
         /**
          * Shows fieldsets with aditional parameters
          */
         changeEnc: function ( e ) {
             var input = $(e.currentTarget),
-                field = $(input.attr('data-field'));
+                field = input.attr('data-field');
 
             this.ui.cryptOpts.hide()
-            field.show();
+            $(field).show();
+            if (field == "#encryptDaplug") this.scanDevices()
         },
 
         /**

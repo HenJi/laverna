@@ -14,6 +14,10 @@ define([
 
         model : Config,
 
+        createOne: function(name, value) {
+            this.create(new Config({ name: name, value: value }));
+        },
+
         /**
          * Creates default set of configs
          */
@@ -32,6 +36,9 @@ define([
             this.create(new Config({ name: 'encryptIter', value: '1000' }));
             this.create(new Config({ name: 'encryptTag', value: '64' }));
             this.create(new Config({ name: 'encryptKeySize', value: '128' }));
+
+            // Daplug Encryption
+            this.create(new Config({ name: 'encryptSerial', value: '' }));
 
             // Shortcuts. Navigation
             this.create(new Config({ name: 'navigateTop', value: 'k' }));
@@ -61,20 +68,24 @@ define([
                 newSecureKey: false
             };
 
+            var cryptoconf = {}
+
             _.forEach(this.models, function ( model ) {
-                data[model.get('name')] = model.get('value');
+                var name = model.get('name')
+                var value = model.get('value')
+                data[name] = value;
+                if (name.substring(0,7) == "encrypt") {
+                    if (name == "encrypt") cryptoconf.mode = value
+                    else {
+                        var key = name.substring(7).toLowerCase()
+                        cryptoconf[key] = value
+                    }
+                }
             });
 
-            var cryptoconf = {
-                mode: data.encrypt,
-                pass: data.encryptPass,
-                salt: data.encryptSalt,
-                iter: data.encryptIter,
-                tag: data.encryptTag,
-                keySize: data.encryptKeySize
-            }
+            console.log(cryptoconf)
             data["cryptoconf"] = cryptoconf
-            data["newCryptoconf"] = jQuery.extend({}, cryptoconf);
+            data["newCryptoconf"] = $.extend({}, cryptoconf);
 
             return data;
         }

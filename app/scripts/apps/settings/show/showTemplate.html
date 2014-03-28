@@ -13,10 +13,10 @@
                 <div class="tab-pane active" id="basic">
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="appLang">
+                        <label class="col-sm-4 control-label" for="appLang">
                             <i class="fa fa-cloud"></i> {{ i18n('Language') }}
                         </label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <select class="form-control" name="appLang" id="appLang">
                                 <option value="en"<%if(models.appLang === 'en'){ %> selected<% } %>>{{ i18n('en') }}</option>
                                 <option value="ru"<%if(models.appLang === 'ru'){ %> selected<% } %>>{{ i18n('ru') }}</option>
@@ -28,10 +28,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="cloudStorage">
+                        <label class="col-sm-4 control-label" for="cloudStorage">
                             <i class="fa fa-cloud"></i> {{ i18n('Cloud storage') }}
                         </label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <select class="form-control" name="cloudStorage" id="cloudStorage">
                                 <option value="0">{{ i18n('No') }}</option>
                                 <option value="dropbox"<%if(models.cloudStorage === 'dropbox'){ %> selected<% } %>>Dropbox</option>
@@ -41,14 +41,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="pagination">{{ i18n('Notes per page') }}</label>
-                        <div class="col-sm-10">
+                        <label class="col-sm-4 control-label" for="pagination">{{ i18n('Notes per page') }}</label>
+                        <div class="col-sm-8">
                             <input type="text" id="pagination" name="pagination" value="{{models.pagination}}" class="form-control" >
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">{{ i18n('Default edit mode') }}</label>
-                        <div class="col-sm-10">
+                        <label class="col-sm-4 control-label">{{ i18n('Default edit mode') }}</label>
+                        <div class="col-sm-8">
                             <select class="form-control" name="editMode" checked="{{models.editMode}}">
                                 <option value="normal">{{ i18n('Normal') }}</option>
                                 <option value="fullscreen" <%if(models.editMode === 'fullscreen'){%>selected<%}%>>{{ i18n('Fullscreen') }}</option>
@@ -58,8 +58,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="useEncryption">{{ i18n('Encryption') }}</label>
-                        <div class="col-sm-10">
+                        <label class="col-sm-4 control-label" for="useEncryption">{{ i18n('Encryption') }}</label>
+                        <div class="col-sm-8">
                           <label class="radio-inline">
                             <input type="radio" class="showField" name="encrypt" id="noEncryption" value="0" <% if(models.encrypt === 0) { %> checked<% } %> /> {{ i18n('Disabled') }}
                           </label>
@@ -75,27 +75,27 @@
                     <fieldset id="encryptOpt" class="cryptOpt" style="<% if(models.encrypt !== 1) { %>display:none;<% } %>">
                         <legend>{{ i18n('Encryption parameters') }}</legend>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Encryption Password') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Encryption Password') }}</label>
+                            <div class="col-sm-8">
                                 <input type="password" name="encryptPass" value="" class="form-control" >
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Salt') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Salt') }}</label>
+                            <div class="col-sm-8">
                                 <input type="text" name="encryptSalt" value="{{models.encryptSalt}}" class="form-control" >
                                 <a id="randomize" href="#">{{ i18n('Random') }}</a>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Strengthen by a factor of') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Strengthen by a factor of') }}</label>
+                            <div class="col-sm-8">
                                 <input type="text" name="encryptIter" value="{{models.encryptIter}}" class="form-control" >
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Key size') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Key size') }}</label>
+                            <div class="col-sm-8">
                                 <select class="form-control" name="encryptKeySize">
                                     <option value="128"<%if(models.encryptKeySize === '128'){ %> selected<% } %>>128</option>
                                     <option value="192"<%if(models.encryptKeySize === '192'){ %> selected<% } %>>192</option>
@@ -104,8 +104,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Authentication strength') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Authentication strength') }}</label>
+                            <div class="col-sm-8">
                                 <select class="form-control" name="encryptTag">
                                     <option value="64"<%if(models.encryptTag === '64'){ %> selected<% } %>>64</option>
                                     <option value="96"<%if(models.encryptTag === '96'){ %> selected<% } %>>96</option>
@@ -116,21 +116,29 @@
                     </fieldset>
                     <fieldset id="encryptDaplug" class="cryptOpt" style="<% if(models.encrypt !== 2) { %>display:none;<% } %>">
                       <legend>{{ i18n('Daplug parameters') }}</legend>
-                      <div>TODO</div>
+                      <div id="daplugStateHolder">{{i18n("Scanning Daplug dongles")}}</div>
+                      <div id="daplugHolder" class="cryptOpt" style="display:none;">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">{{ i18n('Serial number') }}</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="encryptSerial" value="{{models.encryptSerial}}" class="form-control" disabled="disabled"/>
+                            </div>
+                        </div>
+                      </div>
                     </fieldset>                      
                 </div>
                 <div class="tab-pane" id="shortcuts">
                     <fieldset>
                         <legend>{{ i18n('Navigation') }}</legend>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Top') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Top') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.navigateTop}}" name="navigateTop" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Bottom') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Bottom') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.navigateBottom}}" name="navigateBottom" />
                             </div>
                         </div>
@@ -138,26 +146,26 @@
                     <fieldset>
                         <legend>{{ i18n('Jump') }}</legend>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Go to inbox') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Go to inbox') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.jumpInbox}}" name="jumpInbox"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Go to notebook list') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Go to notebook list') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.jumpNotebook}}" name="jumpNotebook"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Go to favourite notes') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Go to favourite notes') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.jumpFavorite}}" name="jumpFavorite"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Go to removed notes') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Go to removed notes') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.jumpRemoved}}" name="jumpRemoved"/>
                             </div>
                         </div>
@@ -165,26 +173,26 @@
                     <fieldset>
                         <legend>{{ i18n('Actions') }}</legend>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Edit') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Edit') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.actionsEdit}}" name="actionsEdit"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Open') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Open') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.actionsOpen}}" name="actionsOpen"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Remove') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Remove') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.actionsRemove}}" name="actionsRemove"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Rotate Star') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Rotate Star') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.actionsRotateStar}}" name="actionsRotateStar"/>
                             </div>
                         </div>
@@ -192,20 +200,20 @@
                     <fieldset>
                         <legend>{{ i18n('App') }}</legend>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Create new note') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Create new note') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.appCreateNote}}" name="appCreateNote"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Search note') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Search note') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.appSearch}}" name="appSearch"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ i18n('Keyboard help') }}</label>
-                            <div class="col-sm-10">
+                            <label class="col-sm-4 control-label">{{ i18n('Keyboard help') }}</label>
+                            <div class="col-sm-8">
                                 <input class="form-control" type="text" value="{{models.appKeyboardHelp}}" name="appKeyboardHelp"/>
                             </div>
                         </div>

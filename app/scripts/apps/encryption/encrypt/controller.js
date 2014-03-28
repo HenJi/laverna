@@ -35,8 +35,8 @@ define([
         },
 
         showProgress: function () {
-            console.log(App.settings.cryptoconf)
-            console.log(App.settings.newCryptoconf)
+            // console.log(App.settings.cryptoconf)
+            // console.log(App.settings.newCryptoconf)
             if (App.settings.cryptoconf === App.settings.newCryptoconf
                 && App.settings.newSecureKey === false) {
                 // No change in encryption settings

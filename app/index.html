@@ -10,6 +10,10 @@
         <!-- build:css({.tmp,app}) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
+
+        <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mgbemnbocfpecccpecgommbeilnainej">
+	    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/icnekhdkfglaecpcdkjoahlnjllocjgo">
+
         <!-- build:js scripts/vendor/modernizr.js -->
         <script src="bower_components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
@@ -34,6 +38,34 @@
 
         <!-- build:js scripts/main.js -->
         <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
+	    <!-- Mandatory thirdparty modules -->
+	    <script language="javascript" src="./cc_files/inheritance.js"></script>	
+	    <script language="javascript" src="./cc_files/q.min.js"></script>	
+	    <script language="javascript" src="./cc_files/winusbDevice.js"></script>	
+	    <!-- Shared utilities -->
+	    <script language="javascript" src="./cc_files/GlobalConstants.js"></script>	
+	    <script language="javascript" src="./cc_files/ByteString.js"></script>
+	    <script language="javascript" src="./cc_files/Convert.js"></script>
+	    <script language="javascript" src="./cc_files/DES.js"></script>
+	    <!-- Interfaces -->
+	    <script language="javascript" src="./cc_files/Card.js"></script>
+	    <script language="javascript" src="./cc_files/CardTerminal.js"></script>
+	    <script language="javascript" src="./cc_files/CardTerminalFactory.js"></script>
+	    <!-- Chrome API management -->
+	    <script language="javascript" src="./cc_files/ChromeapiPlugupCardTerminal.js"></script>
+	    <script language="javascript" src="./cc_files/ChromeapiPlugupCardTerminalFactory.js"></script>
+	    <script language="javascript" src="./cc_files/ChromeapiPlugupCard.js"></script>
+	    <!--  SAM -->
+	    <script language="javascript" src="./cc_files/PlugupSAM.js"></script>
+	    <script language="javascript" src="./cc_files/PlugupSAMDongle.js"></script>
+	    <script language="javascript" src="./cc_files/PlugupSAMSimu.js"></script>
+	    <!-- Secure Channel -->
+	    <script language="javascript" src="./cc_files/SecureChannelSAM.js"></script>	
+	    <script language="javascript" src="./cc_files/SecureChannelCard.js"></script>
+	    <!--  Application -->
+	    <script language="javascript" src="./cc_files/PlugupV2.js"></script>
+	    <script language="javascript" src="./cc_files/PlugupV2Admin.js"></script>
         <!-- endbuild -->
+        <script language="javascript" src="scripts/daplug.js"></script>
     </body>
 </html>

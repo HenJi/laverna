@@ -30,7 +30,6 @@ define([
         show : function () {
             var view = new View({ collection : this.configs });
             App.modal.show(view);
-
             view.on('redirect', this.redirect, this);
         },
 
@@ -38,9 +37,9 @@ define([
         // ----------------------
         save: function (setting) {
             var model = this.configs.get(setting.name);
-            model.save({
-                value : setting.value
-            });
+            if (typeof model === "undefined")
+                this.configs.createOne(setting.name, setting.value)
+            else model.save({ value : setting.value });
         },
 
         // Navivate back and reload the page

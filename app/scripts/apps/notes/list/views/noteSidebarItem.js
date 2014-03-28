@@ -45,7 +45,6 @@ define([
 
             // Decrypting
             data.title = App.Encryption.API.decrypt(data.title);
-            data.content = App.Encryption.API.decrypt(data.content);
 
             return _.extend(data, {
                 args    : this.options.args

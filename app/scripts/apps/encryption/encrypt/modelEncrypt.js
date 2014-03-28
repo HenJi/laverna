@@ -36,9 +36,35 @@ define([
             this.notes.each(function (note) {
                 data = {};
 
+                /*
+                App.Encryption.API.decrypt(note.get('title'), self.oldConf, self.oldSecureKey, function(title){
+                    console.log("lvl 1")
+                    data.title = title
+                    App.Encryption.API.decrypt(note.get('content'), self.oldConf, self.oldSecureKey, function(cont){
+                        console.log("lvl 2")
+                        data.content = cont
+                        App.Encryption.API.encrypt(data.title, self.newConf, self.newSecureKey, function(title2){
+                            console.log("lvl 3")
+                            data.title = title2
+                            App.Encryption.API.encrypt(data.content, self.newConf, self.newSecureKey, function(cont2){
+                                console.log("lvl 4")
+                                data.content = cont2
+                                note.trigger('update:any');
+                                note.save(data, {
+                                    success: function () {
+                                        self.notes.trigger('progressEncryption');
+                                    }
+                                });
+                            });
+                        });
+                    })
+                })
+                */
+
                 // console.log("Encrypt note")
                 // console.log("SRC: "+note.get('title'))
                 // Try to decrypt data
+
                 data.title = App.Encryption.API.decrypt(note.get('title'), self.oldConf, self.oldSecureKey);
                 data.content = App.Encryption.API.decrypt(note.get('content'), self.oldConf, self.oldSecureKey);
                 // console.log("DECR: "+data.title)
